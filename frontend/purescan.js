@@ -1,5 +1,62 @@
 $(document).ready(function () {
 
+    const $splash = $("#splash");
+    const $app = $(".app");
+    const $particles = $(".particles");
+
+    // -----------------------------
+    // 1. CREATE PARTICLES
+    // -----------------------------
+    if ($particles.length) {
+
+        for (let i = 0; i < 25; i++) {
+
+            const size = Math.random() * 4 + 2;
+
+            const $particle = $("<div></div>").addClass("particle");
+
+            $particle.css({
+                width: size + "px",
+                height: size + "px",
+                left: Math.random() * 100 + "%",
+                bottom: Math.random() * 40 + "%",
+                background: Math.random() > 0.5 ? "#00e5a0" : "#00bcd4",
+                "--dur": (Math.random() * 2 + 2) + "s",
+                "--delay": (Math.random() * 2) + "s"
+            });
+
+            $particles.append($particle);
+        }
+    }
+
+    // -----------------------------
+    // 2. SPLASH EXIT ANIMATION
+    // -----------------------------
+    setTimeout(function () {
+
+        $splash.css({
+            transition: "all 0.6s ease",
+            opacity: "0",
+            transform: "scale(1.05)"
+        });
+
+        // remove after fade
+        setTimeout(function () {
+            $splash.hide();
+
+            $app.css({
+                opacity: "1",
+                transition: "0.5s ease"
+            });
+
+        }, 600);
+
+    }, 2200);
+
+});
+
+$(document).ready(function () {
+
     // ===== SCROLL FUNCTION =====
     function scrollChat() {
         const chatbox = $("#chatbox");

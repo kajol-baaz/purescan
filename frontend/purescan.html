@@ -11,9 +11,360 @@
         rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <title>PureScan</title>
+    >
+    <style>
+        :root {
+            --bg-deep: #0f172a;
+            --bg-mid: #1e293b;
+            --bg-soft: #111827;
+
+            --accent: #3b82f6;
+            --accent-strong: #2563eb;
+
+            --glass: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.12);
+
+            --text-light: #f8fafc;
+            --text-muted: #cbd5e1;
+        }
+
+        .site-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+        }
+
+        .site-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .site-content h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--accent);
+            letter-spacing: 0.08em;
+            margin-bottom: 0.5rem;
+        }
+
+        .site-content p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        /* ── SPLASH OVERLAY ── */
+        #splash {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: var(--bg-deep);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #splash::before {
+            content: '';
+            position: absolute;
+            inset: -50%;
+            background:
+                radial-gradient(ellipse 60% 50% at 30% 40%, rgba(59, 130, 246, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 60% at 70% 60%, rgba(37, 99, 235, 0.10) 0%, transparent 60%);
+            animation: meshPulse 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes meshPulse {
+            from {
+                transform: scale(1) rotate(0deg);
+                opacity: 0.7;
+            }
+
+            to {
+                transform: scale(1.1) rotate(3deg);
+                opacity: 1;
+            }
+        }
+
+        #splash::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridSlide 6s linear infinite;
+        }
+
+        @keyframes gridSlide {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(40px);
+            }
+        }
+
+        /* ── LOGO ── */
+        .logo-wrap {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            animation: logoEntry 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes logoEntry {
+            from {
+                opacity: 0;
+                transform: scale(0.7) translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .logo-icon {
+            width: 90px;
+            height: 90px;
+            position: relative;
+        }
+
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 18px rgba(59, 130, 246, 0.6));
+        }
+
+        .ring {
+            position: absolute;
+            inset: -12px;
+            border-radius: 50%;
+            border: 2px solid rgba(59, 130, 246, 0.4);
+            animation: ringPulse 1.6s ease-out infinite;
+        }
+
+        .ring:nth-child(2) {
+            inset: -22px;
+            opacity: 0.25;
+        }
+
+        @keyframes ringPulse {
+            0% {
+                transform: scale(0.85);
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+        }
+
+        .logo-text {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.4rem, 6vw, 3.6rem);
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            color: var(--text-light);
+            position: relative;
+        }
+
+        .logo-text span {
+            color: var(--accent);
+        }
+
+        .logo-text::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -10%;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.25), transparent);
+            animation: textSweep 1.8s ease-in-out 0.4s infinite;
+        }
+
+        @keyframes textSweep {
+            0% {
+                left: -40%;
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                left: 130%;
+                opacity: 0;
+            }
+        }
+
+        .tagline {
+            font-size: 0.78rem;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            opacity: 0;
+            animation: fadeUp 0.6s ease 0.7s forwards;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── PROGRESS ── */
+        .progress-wrap {
+            width: min(300px, 70vw);
+            margin-top: 48px;
+            height: 3px;
+            background: var(--glass);
+            border-radius: 4px;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeUp 0.5s ease 0.9s forwards;
+            border: 1px solid var(--glass-border);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+            animation: fillBar 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.9s forwards;
+        }
+
+        @keyframes fillBar {
+            0% {
+                width: 0%;
+            }
+
+            60% {
+                width: 75%;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+
+        /* ── PARTICLES ── */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0;
+            animation: floatUp var(--dur, 3s) ease-in var(--delay, 0s) infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(0) scale(1);
+            }
+
+            20% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-120px) scale(0.3);
+            }
+        }
+
+        /* ── EXIT ── */
+        #splash.exit {
+            animation: splashExit 0.7s cubic-bezier(0.4, 0, 1, 1) forwards;
+        }
+
+        @keyframes splashExit {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            60% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1.08);
+                pointer-events: none;
+            }
+        }
+    </style>
+
 </head>
 
 <body>
+    <div id="splash">
+
+        <!-- floating particles -->
+        <div class="particles" id="particles"></div>
+
+        <!-- logo -->
+        <div class="logo-wrap">
+            <div class="logo-icon">
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <!-- Magnifier + leaf SVG icon -->
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="42" cy="42" r="28" stroke="#00e5a0" stroke-width="5" />
+                    <circle cx="42" cy="42" r="18" fill="rgba(0,229,160,0.08)" stroke="#00bcd4" stroke-width="2"
+                        stroke-dasharray="4 3" />
+                    <!-- leaf inside -->
+                    <path d="M34 50 C34 40 44 34 52 36 C48 44 40 50 34 50Z" fill="#00e5a0" opacity="0.9" />
+                    <path d="M34 50 C38 46 44 40 52 36" stroke="#050f0a" stroke-width="1.5" stroke-linecap="round" />
+                    <!-- handle -->
+                    <line x1="63" y1="63" x2="78" y2="78" stroke="#00e5a0" stroke-width="6" stroke-linecap="round" />
+                    <!-- scan line inside lens -->
+                    <line x1="28" y1="42" x2="56" y2="42" stroke="#00bcd4" stroke-width="1.5" stroke-linecap="round"
+                        opacity="0.5">
+                        <animateTransform attributeName="transform" type="translate" values="0,-10;0,10;0,-10"
+                            dur="1.5s" repeatCount="indefinite" />
+                    </line>
+                </svg>
+            </div>
+
+            <div class="logo-text">PURE<span>SCAN</span></div>
+            <div class="tagline">AI · Ingredient Analysis · Health Clarity</div>
+        </div>
+
+        <!-- progress bar -->
+        <div class="progress-wrap">
+            <div class="progress-bar"></div>
+        </div>
+
+    </div>
     <!-- === NAV BAR === -->
     <nav class="flex items-center justify-between  p-4">
         <div class="brand-logo">
@@ -153,6 +504,33 @@
         <p>&copy; 2026 PureScan. All rights reserved.</p>
     </footer>
     <script src="/static/purescan.js">
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 22; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = Math.random() * 4 + 2;
+            p.style.cssText = `
+        width:${size}px; height:${size}px;
+        left:${Math.random() * 100}%;
+        bottom:${Math.random() * 30}%;
+        --dur:${(Math.random() * 2 + 2).toFixed(1)}s;
+        --delay:${(Math.random() * 2).toFixed(1)}s;
+        background: ${Math.random() > 0.5 ? '#00e5a0' : '#00bcd4'};
+      `;
+            container.appendChild(p);
+        }
+
+        // ── Dismiss splash after ~2.2 s ──
+        const splash = document.getElementById('splash');
+        const site = document.getElementById('siteContent');
+
+        setTimeout(() => {
+            splash.classList.add('exit');
+            splash.addEventListener('animationend', () => {
+                splash.style.display = 'none';
+                site.classList.add('visible');
+            }, { once: true });
+        }, 2200);
 
     </script>
 </body>
