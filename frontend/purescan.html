@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/purecan.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap"
+        rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>PureScan</title>
+</head>
+
+<body>
+    <!-- === NAV BAR === -->
+    <nav class="flex items-center justify-between  p-4">
+        <div class="brand-logo">
+            <span>🌿</span>
+            <span>PureScan</span>
+        </div>
+        <button class="btn scan-btn">Start Scanning</button>
+    </nav>
+
+    <div class="app">
+
+
+        <!-- ==== MAIN SCREEN === -->
+        <div id="main-screen " class="screen active">
+            <div class="scan-header flex flex-col items-center">
+                <div class="logo-badge glass-card">
+                    <span class="leaf2">🌿</span>
+                    <span>AI-Powered Ingredient Scanner for Healthier Choices</span>
+                </div>
+                <h1 class="scan-title">Know What's in Your Products</h1>
+                <p class="scan-subtitle">Scan product labels instantly and discover harmful ingredients that could
+                    affect your health. Get
+                    detailed safety analysis powered by AI.</p>
+                <button class="btn scan-btn">Start Scanning Now<span class="hand">👉</span></button>
+            </div>
+        </div>
+        <div id="budget-screen" class="screen-budget-css">
+            <div class="card-budget">
+                <svg width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    id="wallet-svg" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2H3V7z" />
+                    <path d="M3 9h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z" />
+                    <circle cx="16" cy="13" r="1" />
+                </svg>
+
+                <h1>Set Your Budget</h1>
+                <p>
+                    Enter your monthly budget for groceries and personal care products.
+                </p>
+
+                <!-- LABELS -->
+                <div class="budget-row labels">
+                    <label for="budget-min">Minimum</label>
+                    <label for="budget-max">Maximum</label>
+                </div>
+
+                <!-- INPUTS -->
+                <div class="budget-row inputs">
+                    <input type="number" id="budget-min" placeholder=" ₹">
+                    <input type="number" id="budget-max" placeholder=" ₹">
+                </div>
+
+                <button class="btn" id="scan-screen-btn">Continue To Scan</button>
+
+            </div>
+        </div>
+
+
+        <div class="flex items-center justify-evenly mt-10 features">
+            <div class="card   glass-card">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    class="logo-color">
+
+                    <!-- Outer Rectangle -->
+                    <rect x="3" y="5" width="18" height="15" rx="2" stroke="currentColor" stroke-width="2" />
+
+                    <!-- Inner Scan Lines -->
+                    <line x1="7" y1="9" x2="17" y2="9" stroke="currentColor" stroke-width="1.5" />
+
+                    <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="1.5" />
+
+                    <line x1="7" y1="15" x2="14" y2="15" stroke="currentColor" stroke-width="1.5" />
+
+                </svg>
+
+
+                <h3>Instant Scanning</h3>
+                <p>Simply snap a photo of ingredient labels or type them in. Our AI analyzes them in seconds.</p>
+            </div>
+            <div class="card glass-card">
+                <!-- Shield Icon SVG -->
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    class="logo-color">
+
+                    <!-- Shield -->
+                    <path d="M12 3L4 6V11C4 16 7.5 19.5 12 21C16.5 19.5 20 16 20 11V6L12 3Z" stroke="currentColor"
+                        stroke-width="1.8" stroke-linejoin="round" />
+
+                    <!-- Checkmark -->
+                    <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-dasharray="20" stroke-dashoffset="20">
+                        <animate attributeName="stroke-dashoffset" values="20;0" dur="1s" fill="freeze" />
+                    </path>
+
+                </svg>
+
+                <h3>Secure Analysis</h3>
+                <p>Get detailed reports on harmful ingredients, risk levels, and potential health effects.</p>
+            </div>
+            <div class="card glass-card">
+                <!-- Heart Icon SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 logo-color" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                <h3>Healthier Choices</h3>
+                <p>Empower yourself to make informed decisions and choose products that are truly good for you.</p>
+            </div>
+        </div>
+
+        <h1 class="text-center mt-10 worker-title">How It Works</h1>
+        <div class="flex items-center justify-evenly mt-6 how-it-works">
+            <div class="step glass-card">
+                <span>1</span>
+                <h2>Scan or Type</h2>
+                <p>Use your camera to scan product labels or type in ingredients manually for analysis.</p>
+            </div>
+            <div class="step glass-card">
+                <span>2</span>
+                <h2>AI Analysis</h2>
+                <p>Our advanced AI algorithms analyze the ingredients and identify potential health risks.</p>
+            </div>
+            <div class="step glass-card">
+                <span>3</span>
+                <h2>Get Results</h2>
+                <p>Receive comprehensive reports on harmful ingredients, risk levels, and health effects.</p>
+            </div>
+        </div>
+        <div class="ready-section-to-scan">
+            <h1>Ready to Make Informed Choices?</h1>
+            <p>Start scanning products today and protect your health.</p>
+            <button class="btn scan-btn">Reveal What’s Inside</button>
+        </div>
+    </div>
+    <footer class="flex items-center justify-center p-4">
+        <p>&copy; 2026 PureScan. All rights reserved.</p>
+    </footer>
+    <script src="/static/purescan.js">
+
+    </script>
+</body>
+
+</html>

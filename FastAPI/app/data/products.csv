@@ -1,0 +1,28 @@
+name,category,price,ingredients,safe_for,avoid,use_case,description,rating,review_source,safety_note
+Maybelline Hypercurl Mascara,mascara,399,Iron Oxides|Synthetic Wax|Glycerin,curling lashes,paraben|fragrance,eye makeup|mascara|lashes,Long-lasting curling mascara,4.4,amazon,Budget friendly
+Lakme Eyeconic Mascara,mascara,450,Beeswax|Pigments|Polymer,waterproof,paraben|silicone,eye makeup|waterproof|mascara,Waterproof daily use mascara,4.3,flipkart,Good for daily wear
+L'Oreal Lash Paradise Mascara,mascara,799,Beeswax|Carnauba Wax|Iron Oxides,volume lashes,paraben|fragrance,eye makeup|volume|mascara,Volumizing mascara for thick lashes,4.5,nykaa,Premium product
+
+Neutrogena Ultra Sheer Sunscreen,sunscreen,499,Avobenzone|Octocrylene|Oxybenzone,all skin types,paraben|alcohol,sunscreen|uv protection|spf,Lightweight SPF 50 sunscreen,4.6,nykaa,Non-greasy formula
+Lotus Herbals Sunscreen,sunscreen,350,Zinc Oxide|Titanium Dioxide,sensitive skin,fragrance|paraben,sunscreen|natural|spf,Natural matte finish sunscreen,4.3,amazon,Herbal formula
+
+Mamaearth Onion Hair Oil,oil,399,Onion|Amla|Castor Oil,hair fall,sulfate|paraben,hair oil|hair growth|scalp,Boosts hair growth and reduces fall,4.5,nykaa,Natural oil
+WOW Onion Black Seed Oil,oil,450,Onion|Black Seed|Coconut Oil,hair fall,sulfate|paraben,hair oil|strengthening|scalp,Strengthens weak hair roots,4.4,flipkart,Chemical-free oil
+
+Nivea Soft Moisturizing Cream,cream,299,Vitamin E|Jojoba Oil|Glycerin,dry skin,paraben|alcohol,cream|moisturizer|hydration,Lightweight daily moisturizer,4.5,amazon,Good for dry skin
+Pond's Light Moisturizer,cream,250,Glycerin|Niacinamide,normal skin,fragrance|paraben,cream|hydration|daily use,Affordable daily moisturizer,4.2,flipkart,Budget option
+
+Plum Green Tea Face Wash,facewash,345,Green Tea|Aloe Vera,acne prone skin,sulfate|paraben,facewash|acne|cleanser,Gentle acne control facewash,4.5,nykaa,Oily skin friendly
+Cetaphil Gentle Cleanser,facewash,399,Glycerin|Niacinamide,sensitive skin,fragrance|paraben,facewash|sensitive|cleanser,Very mild cleanser for sensitive skin,4.6,amazon,Dermatologist recommended
+
+Mamaearth Vitamin C Serum,serum,599,Vitamin C|Hyaluronic Acid|Turmeric,glowing skin,paraben|silicone,serum|brightening|skin care,Boosts skin glow and reduces dullness,4.4,nykaa,Popular serum
+Minimalist Niacinamide Serum,serum,549,Niacinamide|Zinc,acne skin,fragrance|paraben,serum|acne|oil control,Controls oil and reduces acne marks,4.6,amazon,Science-based formula
+Bare Anatomy Anti-Dandruff Shampoo,shampoo,545,Tea Tree Oil|Salicylic Acid|Niacinamide,dandruff,sulfate|paraben,hair care|anti dandruff,Clinically tested anti-dandruff shampoo,4.4,amazon,Reduces flakes and itching
+
+Mamaearth Tea Tree Anti-Dandruff Shampoo,shampoo,349,Tea Tree Oil|Ginger Oil|Vitamin E,dandruff,sulfate|paraben,hair care|dandruff control,Natural shampoo for dandruff removal,4.3,nykaa,Sulfate free formula
+
+WOW Skin Science Anti-Dandruff Shampoo,shampoo,399,Tea Tree Oil|Neem Extract|Aloe Vera,dandruff,sulfate|silicone,hair care|scalp care,Gentle cleansing with anti-dandruff action,4.2,flipkart,Herbal ingredients
+
+Head & Shoulders Anti-Dandruff Shampoo,shampoo,320,Zinc Pyrithione|Water|Fragrance,dandruff,paraben|fragrance,hair wash|dandruff,Popular anti-dandruff shampoo,4.1,amazon,Contains active anti-dandruff agent
+
+Khadi Natural Amla & Bhringraj Shampoo,shampoo,260,Amla|Bhringraj|Reetha,hair fall,sulfate|paraben,hair growth|hair care,Herbal shampoo for strong hair,4.3,flipkart,Ayurvedic formula

@@ -1,0 +1,30 @@
+category,issue,remedy_name,final_product_type,ingredients,how_to_use,when_to_use,description,tags
+hair,Hair fall,Amla Hair Oil,oil,Amla|Coconut Oil,"Boil amla in coconut oil, cool and apply to scalp","2-3 times a week","Strengthens roots and reduces hair fall","hair fall|hair loss|weak hair|oil"
+
+hair,Dandruff,Neem & Reetha Herbal Shampoo,shampoo,Reetha|Neem Leaves|Shikakai|Water,"Boil ingredients, strain, use as liquid shampoo","2-3 times a week","Natural anti-dandruff shampoo alternative","dandruff|itchy scalp|flakes|shampoo"
+
+hair,Hair fall,Reetha Shikakai Shampoo,shampoo,Reetha|Shikakai|Amla|Water,"Soak overnight, boil and use as shampoo liquid","2-3 times a week","Cleans scalp and strengthens hair naturally","hair fall|hair growth|shampoo"
+
+hair,Frizzy hair,Hibiscus Hair Mask,mask,Hibiscus|Curd,"Grind hibiscus and mix with curd, apply on hair","Once a week","Smoothens hair and adds shine","frizzy hair|dry hair|mask"
+
+skin,Dry skin,Aloe Vera Gel Treatment,gel,Aloe Vera,"Apply fresh aloe gel directly on skin","Daily","Deep hydration and soothing effect","dry skin|moisturizer"
+
+skin,Acne,Turmeric Face Mask,mask,Turmeric|Honey,"Mix and apply as face mask, leave for 10-15 mins","2 times a week","Reduces acne and inflammation","acne|pimples"
+
+skin,Oily skin,Multani Mitti Face Pack,mask,Multani Mitti|Rose Water,"Apply evenly, let dry, wash off","Weekly","Controls excess oil and cleans pores","oily skin|oil control"
+
+skin,Wrinkles,Cucumber Face Mask,mask,Cucumber,"Apply slices or paste on face","Daily","Hydrates and tightens skin","wrinkles|aging skin"
+
+skin,Sunburn,Coconut Oil Treatment,oil,Coconut Oil,"Apply gently after cooling skin","After sun exposure","Soothes and heals sunburn","sunburn|burn"
+
+skin,Dark circles,Rose Water Eye Pads,pads,Rose Water|Cotton Pads,"Soak pads and place under eyes","Daily at night","Reduces puffiness and dark circles","dark circles|eye care"
+
+food,Healthy Snack,Roasted Makhana Snack,meal,Makhana|Ghee|Salt,"Dry roast in pan with light seasoning","Evening snack or anytime","Low calorie healthy snack for weight control","healthy snack|weight loss|snack"
+
+food,Energy Drink,Coconut Water Drink,drink,Coconut Water,"Drink fresh directly or chilled","Morning or post workout","Natural hydration with electrolytes","energy|hydration|drink"
+
+food,Healthy Breakfast,Vegetable Poha,meal,Poha|Onion|Tomato|Peas|Spices,"Wash poha, sauté with vegetables","Breakfast","Light, high-energy breakfast meal","breakfast|weight loss|healthy meal"
+
+food,Healthy Snack,Roasted Chana Snack,meal,Chana|Salt,"Dry roast chana and eat","Anytime snack","High protein healthy snack","protein|snack|fitness"
+
+food,Healthy Drink,Fresh Lemon Water,drink,Lemon|Water|Salt,"Mix lemon in water and drink fresh","Morning empty stomach","Improves digestion and detoxifies body","detox|hydration|drink"

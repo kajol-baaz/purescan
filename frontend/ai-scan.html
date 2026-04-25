@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/ai-scan.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>scan-page</title>
+</head>
+
+<body>
+    <!-- === NAV BAR === -->
+    <nav class="flex items-center justify-between  p-4">
+        <div class="brand-logo">
+            <span class="leaf">🌿</span>
+            <span>PureScan</span>
+            <p>AI-Powered Ingredient Scanner for Healthier Choice</p>
+        </div>
+        <button class="nav-btn" id="home-btn">Home</button>
+    </nav>
+    <div id="wellcome"></div>
+    <div id="results">
+        <div id="chatbox" class="p-4 space-y-4 ">
+            <img id="previewImage" style="max-width:250px; margin:auto; display:block;" />
+        </div>
+    </div>
+
+    <div class="scan-page">
+
+        <button id="galleryBtn" class="icon-btn">
+            <!-- Gallery SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor"
+                stroke-width="2" viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <circle cx="8" cy="10" r="2" />
+                <path d="M21 15l-5-5L5 19" />
+            </svg>
+        </button>
+
+        <button id="cameraBtn" class="icon-btn">
+            <!-- Camera SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor"
+                stroke-width="2" viewBox="0 0 24 24">
+                <path d="M4 7h3l2-2h6l2 2h3v13H4z" />
+                <circle cx="12" cy="13" r="3" />
+            </svg>
+        </button>
+
+        <input type="text" class="input-field" id="chatInput" placeholder="Type what you're looking for...">
+
+        <button class="send-btn" id="sendChatBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M2 21l21-9L2 3v7l15 2-15 2z" />
+            </svg>
+        </button>
+        <button id="readAloudBtn"
+            style="margin: 15px 0; padding: 12px 24px; background: #2196F3; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
+            🔊 Read Aloud
+        </button>
+    </div>
+
+    <!-- Hidden File Inputs -->
+    <input type="file" id="galleryInput" accept="image/*" class="hidden">
+    <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden">
+    <script src="/static/purescan.js">
+    </script>
+
+</body>
+
+</html>

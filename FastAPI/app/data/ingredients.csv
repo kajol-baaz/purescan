@@ -1,0 +1,33 @@
+name,simple_name,risk_level,side_effects,source,tags
+Water,Water,Low,No known risk,General safe ingredient,base|safe
+Acrylates Copolymer,Film Former,Low,Generally safe,cosmeticsinfo.org,synthetic|film
+Stearic Acid,Emulsifier,Low,Generally safe,cosmeticsinfo.org,fatty acid|emulsifier
+Cera Alba,Beeswax,Low,Safe,cosmeticsinfo.org,wax|natural
+Polyisobutene,Thickener,Low,Generally safe,cosmeticsinfo.org,thickener|synthetic
+PEG-100 Stearate,Emulsifier,Medium,May cause irritation,ewg.org,emulsifier|irritant
+Glyceryl Stearate,Emulsifier,Low,Generally safe,cosmeticsinfo.org,emulsifier
+CI 77266,Carbon Black,Low,Generally safe,cosmeticsinfo.org,color|pigment
+CI 77499,Iron Oxide,Low,Generally safe,cosmeticsinfo.org,color|pigment
+Cetearyl Alcohol,Emulsifier,Low,Generally safe,cosmeticsinfo.org,fatty alcohol
+Propylene Glycol,Humectant,Medium,May cause irritation,ewg.org,irritant|moisture
+Hydroxyethylcellulose,Thickener,Low,Safe,cosmeticsinfo.org,thickener
+Triethanolamine,pH Adjuster,Medium,May cause irritation,ewg.org,irritant|chemical
+Phenoxyethanol,Preservative,Medium,May cause skin irritation,ewg.org,preservative|irritant
+Methylparaben,Preservative,High,Hormone disruption,pubmed,paraben|harmful
+Propylparaben,Preservative,High,Hormone disruption,pubmed,paraben|harmful
+Sodium Laureth Sulfate,SLS Variant,Medium,Skin irritation,ewg.org,cleanser|sulfate
+Sodium Lauryl Sulfate,SLS,High,Skin irritation,ewg.org,cleanser|harsh
+Fragrance,Perfume,Medium,Allergies & headaches,ewg.org,fragrance|allergy
+Phthalates,Plasticizer,High,Endocrine disruptor,cdc,chemical|toxic
+BHT,Preservative,High,May cause irritation,ewg.org,preservative|toxic
+Formaldehyde,Preservative,High,Carcinogenic,who,toxic|cancer
+Talc,Talc,Medium,Possible asbestos risk,fda,minerals
+Silicone (Dimethicone),Hair Coating Agent,Medium,Buildup on hair,cosmeticsinfo.org,silicone|hair
+Cyclopentasiloxane,Silicone,Medium,Environmental persistence,ewg.org,silicone
+Mineral Oil,Occlusive Oil,Medium,May clog pores,ewg.org,oil|clog pores
+Petrolatum,Petroleum Jelly,Medium,May clog pores,ewg.org,oil|occlusive
+Niacinamide,Skin Active,Low,Occasional mild irritation,pubmed,skin|vitamin
+Hyaluronic Acid,Hydrator,Low,Very safe,cosmeticsinfo.org,hydration|skin
+Retinol,Vitamin A,Medium,Peeling & sensitivity,fda,anti-aging
+Zinc Oxide,Sunscreen Agent,Low,Safe,fda,sunscreen|UV
+

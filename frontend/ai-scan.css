@@ -1,0 +1,258 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* == COLOR SYSTEM == */
+:root {
+    --bg-deep: #0f172a;
+    --bg-mid: #1e293b;
+    --bg-soft: #111827;
+
+    --accent: #3b82f6;
+    --accent-strong: #2563eb;
+
+    --glass: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.12);
+
+    --text-light: #f8fafc;
+    --text-muted: #cbd5e1;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: var(--bg-mid);
+    min-height: 100vh;
+    color: var(--text-light);
+    overflow-x: hidden;
+    overflow-wrap: anywhere;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+nav {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.brand-logo p {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+    font-size: smaller;
+    color: var(--text-muted);
+    /* text-transform: uppercase; */
+}
+
+/* NAV BUTTON */
+.nav-btn {
+    background: var(--accent);
+    color: white;
+    align-items: end;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.scan-page {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 70px;
+    background: rgba(15, 23, 42, 0.9);
+    border-top: 1px solid var(--glass-border);
+}
+
+.icon-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-field {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    background: var(--text-muted);
+    color: black;
+}
+
+
+.send-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#chatbox {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-bottom: 80px;
+    scroll-behavior: smooth;
+}
+
+
+/* #chatbox::-webkit-scrollbar { */
+/* display: none; */
+/* } */
+
+
+#results {
+    display: none;
+    /* margin: 0% 10px;
+    padding: 10px; */
+
+}
+
+.animate-pulse {
+    animation: pulse-size 1s ease-in-out infinite;
+    font-size: medium;
+    /* Repeat forever */
+}
+
+@keyframes pulse-size {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* user message (right side) this part is used in js */
+.user-msg {
+    align-self: flex-end;
+    background: var(--accent);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 10px;
+    max-width: 80%;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    font-family: DM Sans, sans-serif;
+}
+
+.msg-text {
+    color: var(--text-muted);
+    font-size: 14pxs;
+    line-height: 1.4;
+}
+
+/* ai message (left side) */
+.ai-msg {
+    align-self: flex-start;
+    background: var(--bg-deep);
+    border: 1px solid var(--glass-border);
+    padding: 12px 14px;
+    border-radius: 12px;
+    max-width: 85%;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    font-family: DM Sans, sans-serif;
+
+    line-height: 1.6;
+}
+
+.ai-msg h4 {
+    margin: 10px 0 6px;
+    color: var(--accent);
+    font-size: 15px;
+}
+
+.ai-msg hr {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 8px 0;
+}
+
+.ai-msg div {
+    line-height: 1.5;
+}
+
+.ai-msg b {
+    font-size: 14px;
+    text-transform: capitalize;
+    font-size: large;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+#galleryInput,
+#cameraInput {
+    display: none;
+}
+
+.ingredient-box,
+.product-box,
+.food-box,
+.remedy-box {
+    padding: 8px;
+    margin: 6px 0;
+    border-left: 3px solid var(--accent);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    line-height: 1.5;
+}
+
+
+/* mobile screen*/
+@media (max-width: 600px) {
+    body {
+        font-size: 14px;
+        overflow-wrap: anywhere;
+    }
+
+    .nav-btn {
+        padding: 4px 13px;
+    }
+
+    .brand-logo p {
+        font-size: smaller;
+    }
+
+}

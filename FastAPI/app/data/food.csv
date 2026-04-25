@@ -1,0 +1,22 @@
+id,name,category,price,trigger_keywords,healthy_alternative,description,rating
+
+1,Roasted Makhana,Healthy Snack,120,"chips|lays|kurkure|fried snacks","Roasted Makhana","Air-popped fox nuts, low calorie crunchy snack",4.6
+
+2,Roasted Chana,Healthy Snack,90,"namkeen|bhujia|mixture","Roasted Chana","Protein-rich roasted chickpeas",4.5
+
+3,Coconut Water,Beverage,45,"cola|soft drink|soda|coke|energy drink","Natural Coconut Water","Hydrating electrolyte drink with no additives",4.8
+
+4,Juice (No Sugar),Beverage,80,"packaged juice|tetra pack juice","Fresh Fruit Juice","No added sugar cold pressed juice",4.7
+
+5,Oats Cookies (Low Sugar),Healthy Snack,140,"cookies|biscuits|sweet snacks","Homemade Oats Cookies","Fiber-rich low sugar cookies",4.6
+
+6,Whole Wheat Bread,Bakery,60,"white bread|maida bread","Whole Wheat Bread","High fiber healthier bread option",4.4
+
+7,Sweet Potato Chips,Healthy Snack,160,"french fries|chips|lays","Sweet Potato Chips","Oven baked chips with low oil",4.5
+
+8,Dark Chocolate (70%+ Cocoa),Healthy Snack,180,"chocolate bar|milk chocolate","Dark Chocolate","Antioxidant rich low sugar chocolate",4.6
+
+9,Herbal Green Tea,Beverage,110,"tea|coffee|energy drink","Green Tea","Metabolism boosting herbal drink",4.7
+
+10,Probiotic Yogurt Cup,Dairy,70,"ice cream|dessert","Greek Yogurt","Gut friendly high protein dairy option",4.6
+
