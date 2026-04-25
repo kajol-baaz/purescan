@@ -164,10 +164,14 @@ async def scan(file: UploadFile = File(...), min_budget: int = Form(100), max_bu
     # ❌ BLOCK for mascara/eyeliner
     if not is_eye_product(full_text):
         for _, r in home_remedies_df.iterrows():
+            # Match remedy to product type if detected
+            if product_type and product_type not in str(r.get("category", "")).lower() and product_type not in str(r.get("tags", "")).lower():
+                continue
+            
             home_remedies.append({
-                "remedy": r["remedy"],
-                "issue": r["issue"],
-                "description": r["description"]
+                "remedy": r.get("remedy_name", ""),
+                "issue": r.get("issue", ""),
+                "description": r.get("description", "")
             })
 
 
@@ -188,7 +192,8 @@ async def chat(request: dict):
     min_budget = int(request.get("min_budget", 0))
     max_budget = int(request.get("max_budget", 999999))
 
-    message_words = set(user_message.split())
+    stop_words = {"i", "want", "need", "a", "an", "the", "good", "best", "some", "for", "to", "my", "is", "of", "and", "in", "with", "can", "you", "show", "me", "any", "are", "have"}
+    message_words = {w for w in set(user_message.split()) if w not in stop_words and len(w) > 2}
 
     product_results = []
     food_results = []
@@ -213,7 +218,7 @@ async def chat(request: dict):
 
             combined_text = food_name + " " + food_desc + " " + food_alt
 
-            if any(word in combined_text for word in message_words):
+            if any(word in re.findall(r'\w+', combined_text) for word in message_words):
 
                 try:
                     price = int(food_item.get("price", 0))
@@ -240,7 +245,7 @@ async def chat(request: dict):
 
             combined_text = product_name + " " + product_category + " " + product_desc
 
-            if any(word in combined_text for word in message_words):
+            if any(word in re.findall(r'\w+', combined_text) for word in message_words):
 
                 try:
                     price = int(product.get("price", 0))
@@ -267,7 +272,7 @@ async def chat(request: dict):
 
         combined_text = issue + " " + remedy_name + " " + description
 
-        if any(word in combined_text for word in message_words):
+        if any(word in re.findall(r'\w+', combined_text) for word in message_words):
 
             key = remedy.get("remedy_name", "N/A")
 
