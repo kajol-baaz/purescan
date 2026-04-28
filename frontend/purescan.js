@@ -364,7 +364,7 @@ $(document).ready(function () {
                 $("#results").show();
                 $('#chatInput').val('');
 
-                $('#chatbox').append(`<div class="user-msg">💬 ${message}</div>`);
+                $('#chatbox').append(`<div class="user-msg">${message}</div>`);
 
                 scrollChat();
 

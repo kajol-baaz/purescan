@@ -239,6 +239,14 @@ nav {
     line-height: 1.5;
 }
 
+#readAloudBtn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+}
 
 /* mobile screen*/
 @media (max-width: 600px) {
