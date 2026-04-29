@@ -12,6 +12,45 @@
 </head>
 
 <body>
+    <div id="splash">
+
+        <!-- floating particles -->
+        <div class="particles" id="particles"></div>
+
+        <!-- logo -->
+        <div class="logo-wrap">
+            <div class="logo-icon">
+                <div class="ring"></div>
+                <div class="ring"></div>
+                <!-- Magnifier + leaf SVG icon -->
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="42" cy="42" r="28" stroke="#00e5a0" stroke-width="5" />
+                    <circle cx="42" cy="42" r="18" fill="rgba(0,229,160,0.08)" stroke="#00bcd4" stroke-width="2"
+                        stroke-dasharray="4 3" />
+                    <!-- leaf inside -->
+                    <path d="M34 50 C34 40 44 34 52 36 C48 44 40 50 34 50Z" fill="#00e5a0" opacity="0.9" />
+                    <path d="M34 50 C38 46 44 40 52 36" stroke="#050f0a" stroke-width="1.5" stroke-linecap="round" />
+                    <!-- handle -->
+                    <line x1="63" y1="63" x2="78" y2="78" stroke="#00e5a0" stroke-width="6" stroke-linecap="round" />
+                    <!-- scan line inside lens -->
+                    <line x1="28" y1="42" x2="56" y2="42" stroke="#00bcd4" stroke-width="1.5" stroke-linecap="round"
+                        opacity="0.5">
+                        <animateTransform attributeName="transform" type="translate" values="0,-10;0,10;0,-10"
+                            dur="1.5s" repeatCount="indefinite" />
+                    </line>
+                </svg>
+            </div>
+
+            <div class="logo-text">PURE<span>SCAN</span></div>
+            <div class="tagline">AI · Ingredient Analysis · Health Clarity</div>
+        </div>
+
+        <!-- progress bar -->
+        <div class="progress-wrap">
+            <div class="progress-bar"></div>
+        </div>
+
+    </div>
     <!-- === NAV BAR === -->
     <nav>
         <div class="brand-logo">

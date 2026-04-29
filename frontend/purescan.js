@@ -65,6 +65,8 @@ $(document).ready(function () {
     });
 
     // ===== READ ALOUD =====
+    let isSpeaking = false;
+
     $('#readAloudBtn').on('click', function () {
         const chatText = $('#chatbox').text().trim();
 
@@ -73,13 +75,20 @@ $(document).ready(function () {
             return;
         }
 
-        if ('speechSynthesis' in window) {
+        // 🔴 IF SPEAKING → STOP
+        if (isSpeaking) {
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(chatText);
             utterance.rate = 0.95;
+
+            utterance.onend = function () {
+                isSpeaking = false;
+                $("#readAloudBtn").text("🔊 Read Aloud");
+            };
+
             window.speechSynthesis.speak(utterance);
-        } else {
-            alert("❌ Text-to-speech not supported");
+
+            alert("🔊 Voice output started");
         }
     });
 
