@@ -10,8 +10,9 @@ from difflib import get_close_matches
 
 app = FastAPI()
 
-# ================== STATIC ==================
-app.mount("/static", StaticFiles(directory="../../frontend", html=True), name="frontend")
+import os
+frontend_path = os.path.join(os.path.dirname(__file__), "../../frontend")
+app.mount("/static", StaticFiles(directory=frontend_path, html=True), name="frontend")
 
 # ================== CORS ==================
 app.add_middleware(
@@ -24,20 +25,24 @@ app.add_middleware(
 # ================== LOAD ==================
 reader = easyocr.Reader(['en'], gpu=False)
 
-ingredients_df = pd.read_csv("data/ingredients.csv")
-products_df = pd.read_csv("data/products.csv")
-home_remedies_df = pd.read_csv("data/home_remedies.csv")
-food_df = pd.read_csv("data/food.csv")
+data_dir = os.path.join(os.path.dirname(__file__), "data")
+ingredients_df = pd.read_csv(os.path.join(data_dir, "ingredients.csv"))
+products_df = pd.read_csv(os.path.join(data_dir, "products.csv"))
+home_remedies_df = pd.read_csv(os.path.join(data_dir, "home_remedies.csv"))
+food_df = pd.read_csv(os.path.join(data_dir, "food.csv"))
 
 ingredients_df['name'] = ingredients_df['name'].str.lower()
 
 # ================== SMART PRODUCT MAP ==================
 PRODUCT_MAP = {
-    "mascara": ["mascara", "lash", "eye", "eyelash"],
-    "shampoo": ["shampoo", "hair"],
-    "facewash": ["face", "cleanser", "wash", "soap"],
+    "mascara": ["mascara", "lash", "eyelash"],
+    "shampoo": ["shampoo", "hair wash", "anti-dandruff", "anti dandruff"],
+    "facewash": ["face", "cleanser", "wash", "soap", "face wash"],
     "beverage": ["drink", "soda", "cola", "juice", "beverage", "soft drink"],
-    "oil": ["oil", "hair oil"]
+    "oil": ["oil", "hair oil", "onion oil"],
+    "sunscreen": ["sunscreen", "spf", "sun block", "uv protection", "sun screen"],
+    "cream": ["cream", "moisturizer", "moisturising", "lotion"],
+    "serum": ["serum", "vitamin c", "niacinamide serum", "brightening"],
 }
 
 def detect_product_type(text):
@@ -47,7 +52,7 @@ def detect_product_type(text):
             return key
     return None
 
-NO_REMEDY_PRODUCTS = ["mascara", "eyeliner", "eye liner", "kajal"]
+NO_REMEDY_PRODUCTS = ["mascara", "eyeliner", "eye liner", "kajal", "eye shadow", "eyeshadow"]
 
 def is_eye_product(text):
     text = text.lower()
@@ -79,41 +84,44 @@ async def scan(file: UploadFile = File(...), min_budget: int = Form(100), max_bu
     ingredients_text = re.sub(r'[^a-zA-Z0-9\s,.-]', ' ', ingredients_text)
     ingredients_text = re.sub(r'\s+', ' ', ingredients_text).strip()
 
-    parts = [p.strip() for p in ingredients_text.split(",") if p.strip()]
-
     ingredients_output = []
     harmful = []
+    seen_known = set()
 
+    # 1. Find all KNOWN ingredients directly from the full text
+    for _, row in ingredients_df.iterrows():
+        ing = str(row['name']).lower().strip()
+        if len(ing) < 2: continue
+        
+        # Word boundary match to ensure accuracy
+        if re.search(rf'\b{re.escape(ing)}\b', ingredients_text):
+            risk = str(row.get("risk_level", "Unknown"))
+            ingredients_output.append({
+                "name": ing.title(),
+                "decoded": row.get("simple_name", "Unknown"),
+                "risk": risk,
+                "description": row.get("side_effects", "No description")
+            })
+            seen_known.add(ing)
+            if risk.lower() in ["medium", "high"]:
+                harmful.append(ing)
+
+    # 2. Try to find UNKNOWN ingredients (if comma separated)
+    parts = [p.strip() for p in ingredients_text.split(",") if len(p.strip()) > 2]
     for part in parts:
         part_lower = part.lower()
-        found = False
-
-        for _, row in ingredients_df.iterrows():
-            ing = row['name']
-
-            if ing in part_lower:
-                risk = str(row.get("risk_level", "Unknown"))
-
-                ingredients_output.append({
-                    "name": ing.title(),
-                    "decoded": row.get("simple_name"),
-                    "risk": risk,
-                    "description": row.get("side_effects")
-                })
-
-                if risk.lower() in ["medium", "high"]:
-                    harmful.append(ing)
-
-                found = True
-                break
-
-        if not found:
-            ingredients_output.append({
-                "name": part,
-                "decoded": "Unknown",
-                "risk": "Unknown",
-                "description": "Not in database"
-            })
+        # Skip if it's a huge unseparated chunk or already contains a known ingredient
+        if len(part_lower) > 40:
+            continue
+        if any(k in part_lower for k in seen_known):
+            continue
+            
+        ingredients_output.append({
+            "name": part.title(),
+            "decoded": "Unknown",
+            "risk": "Unknown",
+            "description": "Not in database"
+        })
 
     # ===== REMOVE DUPLICATES =====
     seen = set()
@@ -135,7 +143,7 @@ async def scan(file: UploadFile = File(...), min_budget: int = Form(100), max_bu
             category = str(p.get("category", "")).lower()
             name = str(p.get("name", "")).lower()
 
-            # 🎯 STRICT MATCH (IMPORTANT FIX)
+            # STRICT MATCH — only show products of detected type
             if product_type:
                 if product_type in category or product_type in name:
                     product_suggestions.append({
@@ -152,16 +160,19 @@ async def scan(file: UploadFile = File(...), min_budget: int = Form(100), max_bu
                     "name": p['name'],
                     "price": price,
                     "description": p.get("description", ""),
-                    "category": p.get("category")
+                    "category": p.get("category"),
+                    "rating": p.get("rating", "N/A"),
+                    "review_source": p.get("review_source", "N/A"),
+                    "safety_note": p.get("safety_note", "N/A")
                 })
 
-        except:
+        except (ValueError, TypeError):
             continue
 
     # ================== REMEDIES ==================
     home_remedies = []
 
-    # ❌ BLOCK for mascara/eyeliner
+    # BLOCK for mascara/eyeliner/kajal — NO home remedies for eye products
     if not is_eye_product(full_text):
         for _, r in home_remedies_df.iterrows():
             # Match remedy to product type if detected
@@ -174,17 +185,47 @@ async def scan(file: UploadFile = File(...), min_budget: int = Form(100), max_bu
                 "description": r.get("description", "")
             })
 
+    # ================== FOOD ALTERNATIVES ==================
+    food_alternatives = []
+
+    if product_type == "beverage" or "food" in (product_type or ""):
+        for _, f in food_df.iterrows():
+            try:
+                price = int(f.get("price", 0))
+                if min_budget <= price <= max_budget:
+                    food_alternatives.append({
+                        "name": f.get("name", "N/A"),
+                        "alternative": f.get("healthy_alternative", "N/A"),
+                        "description": f.get("description", "N/A"),
+                        "price": price
+                    })
+            except (ValueError, TypeError):
+                continue
+
+    # ================== BUILD REPLY ==================
+    risk_count = len(harmful)
+    total_count = len(ingredients_output)
+
+    if risk_count == 0 and total_count > 0:
+        reply = f"✅ Scan Complete — {total_count} ingredients found. No high-risk ingredients detected!"
+    elif risk_count > 0:
+        reply = f"⚠️ Scan Complete — {total_count} ingredients found, {risk_count} flagged as risky."
+    elif total_count == 0:
+        reply = "📸 Scan Complete — No ingredients could be identified. Try a clearer image."
+    else:
+        reply = "✅ Scan Complete"
 
     return {
+        "reply": reply,
         "extracted_text": ingredients_text,
         "ingredients": ingredients_output,
         "product_suggestions": product_suggestions[:5],
         "home_remedies": home_remedies[:5],
-        "food_alternatives": []
+        "food_alternatives": food_alternatives[:5]
     }
 
 
-# ========= ============================== CHAT ======================
+# ============================================ CHAT ======================
 @app.post("/chat")
 async def chat(request: dict):
 
@@ -192,7 +233,7 @@ async def chat(request: dict):
     min_budget = int(request.get("min_budget", 0))
     max_budget = int(request.get("max_budget", 999999))
 
-    stop_words = {"i", "want", "need", "a", "an", "the", "good", "best", "some", "for", "to", "my", "is", "of", "and", "in", "with", "can", "you", "show", "me", "any", "are", "have"}
+    stop_words = {"i", "want", "need", "a", "an", "the", "good", "best", "some", "for", "to", "my", "is", "of", "and", "in", "with", "can", "you", "show", "me", "any", "are", "have", "give", "suggest", "tell", "about"}
     message_words = {w for w in set(user_message.split()) if w not in stop_words and len(w) > 2}
 
     product_results = []
@@ -202,7 +243,8 @@ async def chat(request: dict):
     # ================= DETECT FOOD =================
     food_keywords = {
         "food", "eat", "drink", "snack", "chips", "coconut",
-        "juice", "makhana", "chana", "oats", "diet", "healthy"
+        "juice", "makhana", "chana", "oats", "diet", "healthy",
+        "breakfast", "lunch", "dinner", "meal"
     }
 
     is_food_query = any(word in user_message for word in food_keywords)
@@ -215,14 +257,15 @@ async def chat(request: dict):
             food_name = str(food_item.get("name", "")).lower()
             food_desc = str(food_item.get("description", "")).lower()
             food_alt = str(food_item.get("healthy_alternative", "")).lower()
+            food_triggers = str(food_item.get("trigger_keywords", "")).lower().replace("|", " ")
 
-            combined_text = food_name + " " + food_desc + " " + food_alt
+            combined_text = food_name + " " + food_desc + " " + food_alt + " " + food_triggers
 
             if any(word in re.findall(r'\w+', combined_text) for word in message_words):
 
                 try:
                     price = int(food_item.get("price", 0))
-                except:
+                except (ValueError, TypeError):
                     price = 0
 
                 if min_budget <= price <= max_budget:
@@ -249,7 +292,7 @@ async def chat(request: dict):
 
                 try:
                     price = int(product.get("price", 0))
-                except:
+                except (ValueError, TypeError):
                     price = 0
 
                 if min_budget <= price <= max_budget:
@@ -258,17 +301,28 @@ async def chat(request: dict):
                         "name": product.get("name", "N/A"),
                         "price": price,
                         "description": product.get("description", "N/A"),
-                        "category": product.get("category", "N/A")
+                        "category": product.get("category", "N/A"),
+                        "rating": product.get("rating", "N/A"),
+                        "review_source": product.get("review_source", "N/A"),
+                        "safety_note": product.get("safety_note", "N/A")
                     })
 
-    # ================= HOME REMEDIES (FIXED PROPERLY) =================
+    # ================= HOME REMEDIES (WITH EYE PRODUCT FILTER) =================
     seen_remedies = set()
+
+    # Block eye-product remedies in chat too
+    eye_blocked = is_eye_product(user_message)
 
     for _, remedy in home_remedies_df.iterrows():
 
         issue = str(remedy.get("issue", "")).lower()
-        remedy_name = str(remedy.get("remedy_name", "")).lower()  # FIXED COLUMN
+        remedy_name = str(remedy.get("remedy_name", "")).lower()
         description = str(remedy.get("description", "")).lower()
+        category = str(remedy.get("category", "")).lower()
+
+        # Skip eye-related remedies if user asked about eye products
+        if eye_blocked and category in ["eye", "eyes"]:
+            continue
 
         combined_text = issue + " " + remedy_name + " " + description
 
@@ -290,14 +344,28 @@ async def chat(request: dict):
     # ================= FINAL RESPONSE =================
     if not product_results and not food_results and not remedy_results:
         return {
-            "reply": "❌ No results found. Try keywords like shampoo, face wash, coconut water, chips, etc.",
+            "reply": "❌ No results found. Try keywords like shampoo, face wash, coconut water, chips, dandruff, acne, etc.",
             "products": [],
             "food_suggestions": [],
             "home_remedies": []
         }
 
+    # Build a smart reply message
+    parts = []
+    if product_results:
+        parts.append(f"{len(product_results[:5])} product(s)")
+    if food_results:
+        parts.append(f"{len(food_results[:5])} food option(s)")
+    if remedy_results:
+        parts.append(f"{len(remedy_results[:5])} home remedy(ies)")
+
+    reply = f"Found {', '.join(parts)} for you 😊"
+
+    if eye_blocked:
+        reply += "\n⚠️ Home remedies are not recommended for eye products."
+
     return {
-        "reply": "Here are your results 😊",
+        "reply": reply,
         "products": product_results[:5],
         "food_suggestions": food_results[:5],
         "home_remedies": remedy_results[:5]
