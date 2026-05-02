@@ -1,3 +1,34 @@
+const $particles = $(".particles");
+if ($particles.length) {
+    for (let i = 0; i < 25; i++) {
+        const size = Math.random() * 4 + 2;
+        $particles.append(
+            $("<div></div>").addClass("particle").css({
+                width: size + "px",
+                height: size + "px",
+                left: Math.random() * 100 + "%",
+                bottom: Math.random() * 40 + "%",
+                background: Math.random() > 0.5 ? "#00e5a0" : "#00bcd4",
+                "--dur": (Math.random() * 2 + 2) + "s",
+                "--delay": (Math.random() * 2) + "s",
+            })
+        );
+    }
+}
+
+// ================================================================
+// SPLASH EXIT  (purescan.html)
+// ================================================================
+const $splash = $("#splash");
+if ($splash.length) {
+    setTimeout(function () {
+        $splash.css({ transition: "all 0.6s ease", opacity: "0", transform: "scale(1.05)" });
+        setTimeout(function () {
+            $splash.hide();
+            $(".app").css({ opacity: "1", transition: "0.5s ease" });
+        }, 600);
+    }, 2200);
+}
 $(document).ready(function () {
 
     // ===== UTILITIES =====
@@ -10,20 +41,19 @@ $(document).ready(function () {
     const minBudget = localStorage.getItem('userMinBudget') || "200";
     const maxBudget = localStorage.getItem('userMaxBudget') || "1000";
 
-    // ===== WELCOME MESSAGE (AI Scan page only) =====
-    if ($('#wellcome').length) {
-        $('#wellcome').append(`
-            <div class="flex justify-start mb-4 mt-4 ml-4">
-                <div class="ai-msg welcome-msg">
-                    <div class="welcome-icon">🌿</div>
-                    <p class="welcome-title">Welcome to <strong>PureScan</strong></p>
-                    <p class="welcome-budget">💰 Budget: <strong>₹${minBudget} - ₹${maxBudget}</strong></p>
-                    <p class="welcome-hint">📸 Upload a product photo or 💬 type a question below!</p>
-                </div>
-            </div>
-        `);
-        scrollChat();
-    }
+    $("#results").show(); // ensure visible
+
+    $("#chatbox").append(`
+    <div class="ai-msg">
+        <p>👋 Hello! Welcome to <strong>PureScan</strong> 🌿</p>
+        <p>💰 Budget: <strong>₹${minBudget} – ₹${maxBudget}</strong></p>
+        <p>📸 Upload a product image <em>or</em> 💬 type a question below!</p>
+        <p style="margin-top:6px;font-size:12px;color:#94a3b8;">
+            Try: "show me juice options", "chips alternatives", "anti-dandruff shampoo"
+        </p>
+    </div>
+`);
+
 
     // ===== BUDGET SCREEN =====
     $("#scan-screen-btn").on("click", function () {
@@ -45,11 +75,13 @@ $(document).ready(function () {
 
         window.location.href = "ai-scan.html";
     });
-
+    // when click on scan btn it will show budget screen
     $('.scan-btn').on('click', function () {
         $('#budget-screen').addClass('show');
     });
-
+    $("svg").on("click", function () {
+        $('#budget-screen').removeClass('show');
+    });
     // ===== NAVIGATION =====
     $("#home-btn").on("click", function () {
         window.location.href = "purescan.html";
@@ -104,7 +136,7 @@ $(document).ready(function () {
 
         // Ingredient Analysis
         if (Array.isArray(res.ingredients) && res.ingredients.length > 0) {
-            html += `<h4>🧪 Ingredient Analysis</h4>`;
+            html += `<h4></h4>`;
             res.ingredients.forEach(i => {
                 const riskClass = (i.risk || "").toLowerCase();
                 let riskBadge = `<span class="risk-badge risk-${riskClass}">${i.risk || "N/A"}</span>`;

@@ -10,16 +10,15 @@ html,
 
 /*--------------- COLOR SYSTEM ------------------*/
 :root {
-    --bg-deep: #0a0f1a;
-    --bg-mid: #111827;
-    --bg-soft: #1a2235;
-
+    --bg-deep: #0f172a;
+    --bg-mid: #1e293b;
+    --bg-soft: #111827;
     --accent: #3b82f6;
     --accent-strong: #2563eb;
     --accent-glow: rgba(59, 130, 246, 0.3);
 
-    --glass: rgba(255, 255, 255, 0.04);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.12);
 
     --text-light: #f1f5f9;
     --text-muted: #94a3b8;
@@ -99,12 +98,10 @@ nav {
     justify-content: space-between;
     align-items: center;
     padding: 14px 24px;
-    background: rgba(10, 15, 26, 0.9);
-    backdrop-filter: blur(16px);
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--glass-border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* ------------ BRAND LOGO  --------------------- */
@@ -117,24 +114,18 @@ nav {
     color: var(--text-light);
 }
 
-.leaf-icon {
-    font-size: 1.5rem;
-    animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-4px); }
-}
-
 /* -------------------- HERO SECTION ------------------------ */
 #main-screen {
     min-height: 80vh;
     display: flex;
-    align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+
+    /* KEY CHANGE */
+    align-items: flex-start;
+
+    padding: 40px 20px 20px;
 }
+
 
 .hand {
     display: inline-block;
@@ -144,32 +135,57 @@ nav {
 }
 
 @keyframes wave {
-    0% { transform: rotate(0deg); }
-    15% { transform: rotate(15deg); }
-    30% { transform: rotate(-10deg); }
-    45% { transform: rotate(10deg); }
-    60% { transform: rotate(-5deg); }
-    75% { transform: rotate(5deg); }
-    100% { transform: rotate(0deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    15% {
+        transform: rotate(15deg);
+    }
+
+    30% {
+        transform: rotate(-10deg);
+    }
+
+    45% {
+        transform: rotate(10deg);
+    }
+
+    60% {
+        transform: rotate(-5deg);
+    }
+
+    75% {
+        transform: rotate(5deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
 }
 
+
 .scan-header {
-    padding: 52px 28px 0;
+    padding: 20px 0 0;
+    /* reduced from 52px */
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.scan-header .logo-badge {
+
+
+.logo-badge {
     display: inline-flex;
     align-items: center;
     gap: 10px;
     border-radius: 40px;
-    padding: 8px 20px 8px 12px;
+    padding: 8px 16px;
     background: var(--glass);
     border: 1px solid var(--glass-border);
     backdrop-filter: blur(14px);
-    margin-bottom: 1.5em;
+    margin-top: 10px;
+    margin-bottom: 1em;
 }
 
 .logo-badge span {
@@ -182,22 +198,18 @@ nav {
 
 .scan-title {
     font-family: 'DM Serif Display', serif;
-    font-size: clamp(36px, 8vw, 58px);
+    font-size: clamp(40px, 8vw, 58px);
     color: var(--text-light);
     line-height: 1.15;
-    margin-bottom: 0.5em;
+    margin-bottom: 0.4em;
     text-align: center;
-    background: linear-gradient(135deg, var(--text-light) 0%, var(--text-muted) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
 }
 
 .scan-subtitle {
     font-size: 1rem;
     max-width: 550px;
     color: var(--text-muted);
-    margin-bottom: 40px;
+    margin-bottom: 28px;
     text-align: center;
     line-height: 1.6;
 }
@@ -230,7 +242,7 @@ nav {
     border-radius: 20px;
     backdrop-filter: blur(24px);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-    padding: 40px;
+    padding: 28px;
     max-width: 440px;
     width: 90%;
     margin: 0 auto;
@@ -305,14 +317,14 @@ nav {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 20px;
-    padding: 20px 40px 40px;
+    padding: clamp(16px, 4vw, 32px);
     max-width: 1000px;
     margin: 0 auto;
     width: 100%;
 }
 
 .features .card {
-    padding: 28px;
+    padding: 22px;
     transition: all 0.35s ease;
     text-align: left;
 }
@@ -358,7 +370,7 @@ nav {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 20px;
-    padding: 20px 40px 40px;
+    padding: 20px 24px 32px;
     max-width: 900px;
     margin: 0 auto;
     width: 100%;
@@ -366,7 +378,8 @@ nav {
 
 .how-it-works .step {
     text-align: center;
-    padding: 28px 20px;
+    padding: 22px 18px;
+    transition: all 0.35s ease;
 }
 
 .step span {
@@ -403,7 +416,7 @@ nav {
     flex-direction: column;
     align-items: center;
     gap: 16px;
-    padding: 80px 20px 60px;
+    padding: clamp(40px, 8vw, 60px) clamp(16px, 4vw, 24px);
 }
 
 .ready-section-to-scan h1 {

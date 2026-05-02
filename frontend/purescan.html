@@ -6,12 +6,322 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
         content="PureScan — AI-powered ingredient scanner for healthier choices. Scan product labels and get instant safety analysis.">
-    <link rel="stylesheet" href="/static/purescan.css">
+    <link rel="stylesheet" href="/static/purecan.css">
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap"
         rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <title>PureScan — Know What's In Your Products</title>
+    <style>
+        :root {
+            --bg-deep: #0f172a;
+            --bg-mid: #1e293b;
+            --bg-soft: #111827;
+
+            --accent: #3b82f6;
+            --accent-strong: #2563eb;
+
+            --glass: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.12);
+
+            --text-light: #f8fafc;
+            --text-muted: #cbd5e1;
+        }
+
+        .site-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+        }
+
+        .site-content.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .site-content h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--accent);
+            letter-spacing: 0.08em;
+            margin-bottom: 0.5rem;
+        }
+
+        .site-content p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        /* ── SPLASH OVERLAY ── */
+        #splash {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: var(--bg-deep);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #splash::before {
+            content: '';
+            position: absolute;
+            inset: -50%;
+            background:
+                radial-gradient(ellipse 60% 50% at 30% 40%, rgba(59, 130, 246, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 60% at 70% 60%, rgba(37, 99, 235, 0.10) 0%, transparent 60%);
+            animation: meshPulse 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes meshPulse {
+            from {
+                transform: scale(1) rotate(0deg);
+                opacity: 0.7;
+            }
+
+            to {
+                transform: scale(1.1) rotate(3deg);
+                opacity: 1;
+            }
+        }
+
+        #splash::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridSlide 6s linear infinite;
+        }
+
+        @keyframes gridSlide {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(40px);
+            }
+        }
+
+        /* ── LOGO ── */
+        .logo-wrap {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            animation: logoEntry 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes logoEntry {
+            from {
+                opacity: 0;
+                transform: scale(0.7) translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .logo-icon {
+            width: 90px;
+            height: 90px;
+            position: relative;
+        }
+
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 18px rgba(59, 130, 246, 0.6));
+        }
+
+        .ring {
+            position: absolute;
+            inset: -12px;
+            border-radius: 50%;
+            border: 2px solid rgba(59, 130, 246, 0.4);
+            animation: ringPulse 1.6s ease-out infinite;
+        }
+
+        .ring:nth-child(2) {
+            inset: -22px;
+            opacity: 0.25;
+        }
+
+        @keyframes ringPulse {
+            0% {
+                transform: scale(0.85);
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+        }
+
+        .logo-text {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.4rem, 6vw, 3.6rem);
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            color: var(--text-light);
+            position: relative;
+        }
+
+        .logo-text span {
+            color: var(--accent);
+        }
+
+        .logo-text::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -10%;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.25), transparent);
+            animation: textSweep 1.8s ease-in-out 0.4s infinite;
+        }
+
+        @keyframes textSweep {
+            0% {
+                left: -40%;
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                left: 130%;
+                opacity: 0;
+            }
+        }
+
+        .tagline {
+            font-size: 0.78rem;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            opacity: 0;
+            animation: fadeUp 0.6s ease 0.7s forwards;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── PROGRESS ── */
+        .progress-wrap {
+            width: min(300px, 70vw);
+            margin-top: 48px;
+            height: 3px;
+            background: var(--glass);
+            border-radius: 4px;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeUp 0.5s ease 0.9s forwards;
+            border: 1px solid var(--glass-border);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+            animation: fillBar 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.9s forwards;
+        }
+
+        @keyframes fillBar {
+            0% {
+                width: 0%;
+            }
+
+            60% {
+                width: 75%;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+
+        /* ── PARTICLES ── */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0;
+            animation: floatUp var(--dur, 3s) ease-in var(--delay, 0s) infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(0) scale(1);
+            }
+
+            20% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-120px) scale(0.3);
+            }
+        }
+
+        /* ── EXIT ── */
+        #splash.exit {
+            animation: splashExit 0.7s cubic-bezier(0.4, 0, 1, 1) forwards;
+        }
+
+        @keyframes splashExit {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            60% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1.08);
+                pointer-events: none;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -72,7 +382,7 @@
                     <span class="leaf2">🌿</span>
                     <span>AI-Powered Ingredient Scanner for Healthier Choices</span>
                 </div>
-                <h1 class="scan-title">Know What's in<br>Your Products</h1>
+                <h1 class="scan-title">Know What's in Your Products</h1>
                 <p class="scan-subtitle">Scan product labels instantly and discover harmful ingredients that could
                     affect your health. Get detailed safety analysis powered by AI.</p>
                 <button class="btn scan-btn glow-btn">Start Scanning Now<span class="hand">👉</span></button>
