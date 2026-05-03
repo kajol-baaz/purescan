@@ -169,6 +169,7 @@ $(document).ready(function () {
                             <span>🔗 ${p.review_source || "N/A"}</span>
                         </div>
                         <p class="result-desc">${p.description || ""}</p>
+                        <a href="${p.link || "#"}" target="_blank" class="product-link">View Product</a>
                         <p class="safety-note">⚠️ ${p.safety_note || "N/A"}</p>
                     </div>
                 `;
@@ -197,7 +198,7 @@ $(document).ready(function () {
             res.home_remedies.forEach(r => {
                 html += `
                     <div class="result-box remedy-box">
-                        <b>🌱 ${r.remedy || "N/A"}</b>
+                        <b>🌱 ${r.remedy_name || "N/A"}</b>
                         <span class="remedy-issue">${r.issue || ""}</span>
                         <p class="result-desc">${r.description || ""}</p>
                     </div>
@@ -227,6 +228,7 @@ $(document).ready(function () {
                             <span>🔗 ${p.review_source || "N/A"}</span>
                         </div>
                         <p class="result-desc">${p.description || "No description available"}</p>
+                        <a href="${p.link || "#"}" target="_blank" class="product-link">View Product</a>
                     </div>
                 `;
             });
@@ -256,7 +258,8 @@ $(document).ready(function () {
             res.home_remedies.forEach(r => {
                 html += `
                     <div class="result-box remedy-box">
-                        <b>🌱 ${r.remedy || r.remedy_name || "N/A"}</b>
+                        <b>🌱 ${r.remedy_name || "N/A"}</b>
+
                         <span class="remedy-issue">${r.issue || ""}</span>
                         <p class="result-desc">${r.description || "No description available"}</p>
                     </div>
@@ -300,7 +303,7 @@ $(document).ready(function () {
                 <div class="loading-dots">
                     <span></span><span></span><span></span>
                 </div>
-                <span>Analyzing your product... 🧪</span>
+            
             </div>
         `);
         $('#chatbox').append(loadingMsg);

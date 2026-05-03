@@ -30,4 +30,31 @@ Niacinamide,Skin Active,Low,Occasional mild irritation,pubmed,skin|vitamin
 Hyaluronic Acid,Hydrator,Low,Very safe,cosmeticsinfo.org,hydration|skin
 Retinol,Vitamin A,Medium,Peeling & sensitivity,fda,anti-aging
 Zinc Oxide,Sunscreen Agent,Low,Safe,fda,sunscreen|UV
+Purified Water,Water,Low,No known risk,General safe ingredient,base|safe
+Sodium Lauroyl Methyl Isethionate,Cleanser,Low,Gentle surfactant,cosmeticsinfo.org,cleanser|mild
+Cocamidopropyl Betaine,Cleanser,Medium,May cause irritation in sensitive skin,ewg.org,cleanser|irritant
+Propanediol,Humectant,Low,Generally safe,cosmeticsinfo.org,moisture|safe
+Glycerin,Humectant,Low,Very safe and hydrating,cosmeticsinfo.org,hydration|skin
+Dimethiconol,Silicone,Medium,May cause buildup on hair,ewg.org,silicone|hair
+TEA-Dodecylbenzenesulfonate,Cleanser,High,Can be harsh and irritating,ewg.org,surfactant|harsh
+Perfume,Fragrance,Medium,Allergies and irritation,ewg.org,fragrance|allergy
+Piroctone Olamine,Anti-dandruff,Low,Generally safe,pubmed,anti-dandruff|scalp
+Salicylic Acid,Exfoliant,Medium,May cause dryness or irritation,fda,acid|exfoliant
+Panthenol,Pro-vitamin B5,Low,Very safe and soothing,cosmeticsinfo.org,vitamin|hair
+Rosmarinus Officinalis Extract,Herbal Extract,Low,Generally safe,cosmeticsinfo.org,herbal|natural
+Niacin,Vitamin B3,Low,Safe,pubmed,vitamin|skin
+Biotin,Vitamin B7,Low,Safe,pubmed,vitamin|hair
+Aloe Barbadensis Leaf Extract,Aloe Vera,Low,Soothing and safe,cosmeticsinfo.org,plant|soothing
+Menthol,Cooling Agent,Medium,May irritate sensitive skin,ewg.org,cooling|irritant
+Cocos Nucifera Milk Protein,Coconut Protein,Low,Safe and nourishing,cosmeticsinfo.org,protein|hair
+Stearamidopropyl Dimethylamine,Conditioning Agent,Low,Generally safe,cosmeticsinfo.org,conditioner|hair
+Guar Hydroxypropyltrimonium Chloride,Conditioning Polymer,Low,Safe,cosmeticsinfo.org,polymer|conditioning
+Titanium Dioxide,Colorant,Low,Safe,fda,color|pigment
+Tin Oxide,Color Stabilizer,Low,Safe,cosmeticsinfo.org,mineral|color
+PEG-45M,Thickener,Medium,May contain impurities,ewg.org,polymer|thickener
+Sodium Chloride,Salt,Low,Safe,cosmeticsinfo.org,base|salt
+Citric Acid,pH Adjuster,Low,Generally safe,fda,acid|ph
+Sodium Benzoate,Preservative,Low,Safe,cosmeticsinfo.org,preservative
+Disodium EDTA,Stabilizer,Medium,May enhance penetration of chemicals,ewg.org,chemical|stabilizer
+Epilobium Angustifolium Extract,Willow Herb Extract,Low,Soothing,
 

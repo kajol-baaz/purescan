@@ -1,5 +1,5 @@
 category,issue,remedy_name,final_product_type,ingredients,how_to_use,when_to_use,description,tags
-hair,Hair fall,Amla Hair Oil,oil,Amla|Coconut Oil,"Boil amla in coconut oil, cool and apply to scalp","2-3 times a week","Strengthens roots and reduces hair fall","hair fall|hair loss|weak hair|oil"
+hair,Hair fall,Amla Hair Oil,oil,Amla,"Boil amla in coconut oil, cool and apply to scalp","2-3 times a week","Strengthens roots and reduces hair fall","hair fall|hair loss|weak hair|oil"
 
 hair,Dandruff,Neem & Reetha Herbal Shampoo,shampoo,Reetha|Neem Leaves|Shikakai|Water,"Boil ingredients, strain, use as liquid shampoo","2-3 times a week","Natural anti-dandruff shampoo alternative","dandruff|itchy scalp|flakes|shampoo"
 
@@ -21,10 +21,9 @@ skin,Dark circles,Rose Water Eye Pads,pads,Rose Water|Cotton Pads,"Soak pads and
 
 food,Healthy Snack,Roasted Makhana Snack,meal,Makhana|Ghee|Salt,"Dry roast in pan with light seasoning","Evening snack or anytime","Low calorie healthy snack for weight control","healthy snack|weight loss|snack"
 
-food,Energy Drink,Coconut Water Drink,drink,Coconut Water,"Drink fresh directly or chilled","Morning or post workout","Natural hydration with electrolytes","energy|hydration|drink"
 
 food,Healthy Breakfast,Vegetable Poha,meal,Poha|Onion|Tomato|Peas|Spices,"Wash poha, sauté with vegetables","Breakfast","Light, high-energy breakfast meal","breakfast|weight loss|healthy meal"
 
 food,Healthy Snack,Roasted Chana Snack,meal,Chana|Salt,"Dry roast chana and eat","Anytime snack","High protein healthy snack","protein|snack|fitness"
 
-food,Healthy Drink,Fresh Lemon Water,drink,Lemon|Water|Salt,"Mix lemon in water and drink fresh","Morning empty stomach","Improves digestion and detoxifies body","detox|hydration|drink"
+drink,Healthy Drink,Fresh Lemon Water,drink,Lemon|Water|Salt,"Mix lemon in water and drink fresh","Morning empty stomach","Improves digestion and detoxifies body","detox|hydration|drink"

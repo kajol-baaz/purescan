@@ -1,17 +1,24 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 import easyocr
 import numpy as np
 import cv2
 import pandas as pd
 import re
 from difflib import get_close_matches
+import os
 
 app = FastAPI()
 
-# ================== STATIC ==================
-app.mount("/static", StaticFiles(directory="../../frontend", html=True), name="frontend")
+# ================== PATHS & STATIC ==================
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FRONTEND_DIR = os.path.join(BASE_DIR, "../../frontend")
+DATA_DIR = os.path.join(BASE_DIR, "data")
+
+# Mount static files safely
+app.mount("/static", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
 # ================== CORS ==================
 app.add_middleware(
@@ -21,271 +28,282 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ================== LOAD ==================
+# ================== LOAD DATABASES ==================
 reader = easyocr.Reader(['en'], gpu=False)
 
-ingredients_df = pd.read_csv("data/ingredients.csv")
-products_df = pd.read_csv("data/products.csv")
-home_remedies_df = pd.read_csv("data/home_remedies.csv")
-food_df = pd.read_csv("data/food.csv")
+def safe_load_csv(filename):
+    """Safely loads CSV and replaces NaN values with empty strings to prevent JSON crashes."""
+    path = os.path.join(DATA_DIR, filename)
+    if os.path.exists(path):
+        return pd.read_csv(path).fillna("")
+    return pd.DataFrame()
 
-ingredients_df['name'] = ingredients_df['name'].str.lower()
+ingredients_df = safe_load_csv("ingredients.csv")
+if not ingredients_df.empty and 'name' in ingredients_df.columns:
+    ingredients_df['name'] = ingredients_df['name'].astype(str).str.lower()
 
-# ================== SMART PRODUCT MAP ==================
-PRODUCT_MAP = {
-    "mascara": ["mascara", "lash", "eye", "eyelash"],
-    "shampoo": ["shampoo", "hair"],
-    "facewash": ["face", "cleanser", "wash", "soap"],
-    "beverage": ["drink", "soda", "cola", "juice", "beverage", "soft drink"],
-    "oil": ["oil", "hair oil"]
+products_df = safe_load_csv("products.csv")
+home_remedies_df = safe_load_csv("home_remedies.csv")
+food_df = safe_load_csv("food.csv") # FIXED: Added missing food_df!
+
+# ================== CLEANING ==================
+CORRECTIONS = {
+    "befaine": "betaine",
+    "walet": "water",
+    "olficinale": "officinale",
+    "oflicinalis": "officinalis",
+    "propvl": "propyl",
+    "krimonium": "trimonium",
+    "purified water": "water",
 }
 
-def detect_product_type(text):
-    text = text.lower()
-    for key, keywords in PRODUCT_MAP.items():
-        if any(k in text for k in keywords):
-            return key
+def clean_text(text):
+    text = str(text).lower()
+    for wrong, correct in CORRECTIONS.items():
+        text = text.replace(wrong, correct)
+    return text
+
+def split_ingredients(text):
+    """Safely splits ingredients based on punctuation instead of spaces, preserving multi-word ingredients."""
+    raw_parts = re.split(r'[,.\n|]', text)
+    final_parts = []
+
+    for part in raw_parts:
+        part = part.strip()
+        part = re.sub(r'[^a-z0-9\s-]', '', part) # Remove weird OCR characters
+        if len(part) > 1: # Allow small ingredients like "wax", "tin", "oat"
+            final_parts.append(part)
+
+    return final_parts
+
+# ================== MATCHING ==================
+def match_ingredient(part):
+    if ingredients_df.empty:
+        return None
+        
+    part = part.lower().strip()
+
+    # 1. EXACT MATCH
+    exact = ingredients_df[ingredients_df['name'] == part]
+    if not exact.empty:
+        return exact.iloc[0]
+
+    # 2. PARTIAL MATCH (Safe Check)
+    for _, row in ingredients_df.iterrows():
+        name = str(row.get('name', ''))
+        # Ensure DB name is substantial (>3 chars) and perfectly exists in the string
+        if len(name) > 3 and name in part:
+            return row
+
+    # 3. FUZZY MATCH (Typo tolerance)
+    possibilities = ingredients_df['name'].tolist()
+    fuzzy_matches = get_close_matches(part, possibilities, n=1, cutoff=0.7)
+    if fuzzy_matches:
+        return ingredients_df[ingredients_df['name'] == fuzzy_matches[0]].iloc[0]
+
     return None
 
-NO_REMEDY_PRODUCTS = ["mascara", "eyeliner", "eye liner", "kajal"]
+# ================== PRODUCT TYPES ==================
+def detect_product_type(text):
+    text = text.lower()
+    if any(x in text for x in ["sodium lauroyl", "cocamidopropyl", "betaine", "dimethiconol", "guar hydroxy", "piroctone"]):
+        return "shampoo"
+    if any(x in text for x in ["ci 77499", "ci 77266", "wax", "carnauba", "cera alba"]):
+        return "mascara"
+    if any(x in text for x in ["salicylic acid", "cleanser", "face wash"]):
+        return "facewash"
+    return "unknown"
 
 def is_eye_product(text):
-    text = text.lower()
-    return any(x in text for x in NO_REMEDY_PRODUCTS)
+    return any(x in text for x in ["mascara", "eyeliner", "kajal", "eye"])
 
-# ====================== SCAN ======================
+# ================== SCAN ENDPOINT ==================
 @app.post("/purescan")
 async def scan(file: UploadFile = File(...), min_budget: int = Form(100), max_budget: int = Form(2000)):
-
     contents = await file.read()
     image = np.frombuffer(contents, np.uint8)
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
     if image is None:
-        return {"error": "Invalid image"}
+        return JSONResponse(status_code=400, content={"error": "Invalid image format"})
 
+    # 1. OCR
     result = reader.readtext(image)
-    full_text = " ".join([r[1] for r in result]).lower()
+    full_text = " ".join([str(r[1]) for r in result]).lower()
 
-    # ===== EXTRACT =====
-    match = re.search(
-        r'ingredient[s]?\s*[:\-]?\s*(.*?)(usage|direction|how to use|warning|apply|$)',
+    # 2. Extract strictly the ingredients part
+    regex_match = re.search(
+        r'ingredient[s]?\s*[:\-]?\s*(.*?)(usage|direction|warning|apply|manufactured|made in|$)',
         full_text,
         re.IGNORECASE | re.DOTALL
     )
+    ingredients_text = regex_match.group(1) if regex_match else full_text
 
-    ingredients_text = match.group(1) if match else full_text
-
-    ingredients_text = re.sub(r'[^a-zA-Z0-9\s,.-]', ' ', ingredients_text)
-    ingredients_text = re.sub(r'\s+', ' ', ingredients_text).strip()
-
-    parts = [p.strip() for p in ingredients_text.split(",") if p.strip()]
+    # 3. Clean & Split
+    ingredients_text = clean_text(ingredients_text)
+    parts = split_ingredients(ingredients_text)
 
     ingredients_output = []
     harmful = []
+    seen = set()
 
+    # 4. Ingredient Analysis
     for part in parts:
-        part_lower = part.lower()
-        found = False
+        matched_row = match_ingredient(part)
 
-        for _, row in ingredients_df.iterrows():
-            ing = row['name']
+        if matched_row is not None:
+            name = str(matched_row.get('name', part)).title()
 
-            if ing in part_lower:
-                risk = str(row.get("risk_level", "Unknown"))
+            if name.lower() in seen:
+                continue
+            seen.add(name.lower())
 
-                ingredients_output.append({
-                    "name": ing.title(),
-                    "decoded": row.get("simple_name"),
-                    "risk": risk,
-                    "description": row.get("side_effects")
-                })
-
-                if risk.lower() in ["medium", "high"]:
-                    harmful.append(ing)
-
-                found = True
-                break
-
-        if not found:
+            risk = str(matched_row.get("risk_level", "Unknown")).title()
+            
             ingredients_output.append({
-                "name": part,
-                "decoded": "Unknown",
-                "risk": "Unknown",
-                "description": "Not in database"
+                "name": name,
+                "decoded": str(matched_row.get("simple_name", "")),
+                "risk": risk,
+                "description": str(matched_row.get("side_effects", ""))
             })
 
-    # ===== REMOVE DUPLICATES =====
-    seen = set()
-    ingredients_output = [i for i in ingredients_output if not (i["name"] in seen or seen.add(i["name"]))]
+            if risk.lower() in ["Medium", "High"]:
+                harmful.append(name)
+        else:
+            if part.lower() in seen:
+                continue
+            seen.add(part.lower())
 
-    # ===== SMART PRODUCT TYPE DETECTION =====
+            ingredients_output.append({
+                "name": part.title(),
+                "decoded": "Unknown",
+                "risk": "Not Found",
+                "description": "Ingredient not in database"
+            })
+
+    # 5. Product Suggestions (With Links)
     product_type = detect_product_type(full_text)
-
-    # ================== PRODUCTS ==================
     product_suggestions = []
 
-    for _, p in products_df.iterrows():
-        try:
-            price = int(p.get("price", 0))
+    if not products_df.empty:
+        for _, p in products_df.iterrows():
+            try:
+                price = int(float(p.get("price", 0)))
+                if not (min_budget <= price <= max_budget):
+                    continue
 
-            if not (min_budget <= price <= max_budget):
+                p_name = str(p.get("name", "")).lower()
+                p_cat = str(p.get("category", "")).lower()
+
+                # Suggest products based on the detected type (or suggest anything if type is unknown)
+                if product_type == "unknown" or product_type in p_name or product_type in p_cat or ("hair" in p_cat and product_type == "shampoo"):
+                    product_suggestions.append({
+                        "name": str(p.get("name", "")),
+                        "price": price,
+                        "rating": str(p.get("rating", "N/A")),
+                        "description": str(p.get("description", "")),
+                        "category": str(p.get("category", "")),
+                        "link": str(p.get("link", "N/A")) # Requirement 3: Includes links for purchase!
+                    })
+            except Exception:
                 continue
 
-            category = str(p.get("category", "")).lower()
-            name = str(p.get("name", "")).lower()
-
-            # 🎯 STRICT MATCH (IMPORTANT FIX)
-            if product_type:
-                if product_type in category or product_type in name:
-                    product_suggestions.append({
-                        "name": p['name'],
-                        "price": price,
-                        "description": p.get("description", ""),
-                        "category": p.get("category"),
-                        "rating": p.get("rating", "N/A"),
-                        "review_source": p.get("review_source", "N/A"),
-                        "safety_note": p.get("safety_note", "N/A")
-                    })
-            else:
-                product_suggestions.append({
-                    "name": p['name'],
-                    "price": price,
-                    "description": p.get("description", ""),
-                    "category": p.get("category")
-                })
-
-        except:
-            continue
-
-    # ================== REMEDIES ==================
+    # 6. Home Remedies (Requirement 4: Exclude for eye products)
     home_remedies = []
-
-    # ❌ BLOCK for mascara/eyeliner
-    if not is_eye_product(full_text):
+    if not is_eye_product(full_text) and not home_remedies_df.empty:
         for _, r in home_remedies_df.iterrows():
+            remedy_name = str(r.get("remedy_name", r.get("remedy_name", "Unknown")))
             home_remedies.append({
-                "remedy": r["remedy"],
-                "issue": r["issue"],
-                "description": r["description"]
+                "remedy_name": remedy_name,
+                "issue": str(r.get("issue", "Unknown")),
+                "description": str(r.get("description", "No description"))
             })
-
 
     return {
         "extracted_text": ingredients_text,
+        "product_type_detected": product_type,
         "ingredients": ingredients_output,
+        "harmful_ingredients": harmful,
         "product_suggestions": product_suggestions[:5],
-        "home_remedies": home_remedies[:5],
-        "food_alternatives": []
+        "home_remedies": home_remedies[:5] # Returns up to 5 remedies, empty if eye product
     }
 
-
-# ========= ============================== CHAT ======================
+# ====================== CHAT ======================
 @app.post("/chat")
 async def chat(request: dict):
+    user_message = str(request.get("message", "")).lower()
+    
+    # Remove punctuation for clean matching
+    clean_message = re.sub(r'[^\w\s]', '', user_message)
+    
+    # Filter out common stop words so words like "is", "a", "good" don't match random products
+    stop_words = {"is", "a", "an", "the", "for", "my", "i", "need", "want", "any", "some", "good", "best", "what", "are", "there"}
+    message_words = {w for w in clean_message.split() if w not in stop_words and len(w) > 2}
 
-    user_message = (request.get("message") or "").lower()
     min_budget = int(request.get("min_budget", 0))
     max_budget = int(request.get("max_budget", 999999))
-
-    message_words = set(user_message.split())
 
     product_results = []
     food_results = []
     remedy_results = []
 
-    # ================= DETECT FOOD =================
-    food_keywords = {
-        "food", "eat", "drink", "snack", "chips", "coconut",
-        "juice", "makhana", "chana", "oats", "diet", "healthy"
-    }
+    # ================= FOOD DETECTION =================
+    food_keywords = {"food", "eat", "drinks", "snacks", "chips", "juice", "makhana", "chana", "oats", "healthy", "diet","ice-creem","snack","beverage","biscuit","cookie","sweet","sugar","candy","chocolate"}
+    is_food_query = any(word in message_words for word in food_keywords)
 
-    is_food_query = any(word in user_message for word in food_keywords)
-
-    # ================= FOOD SEARCH =================
-    if is_food_query:
-
+    # ================= SEARCH LOGIC =================
+    if is_food_query and not food_df.empty:
         for _, food_item in food_df.iterrows():
-
-            food_name = str(food_item.get("name", "")).lower()
-            food_desc = str(food_item.get("description", "")).lower()
-            food_alt = str(food_item.get("healthy_alternative", "")).lower()
-
-            combined_text = food_name + " " + food_desc + " " + food_alt
-
-            if any(word in combined_text for word in message_words):
-
+            combined = (str(food_item.get("name", "")) + " " + str(food_item.get("description", ""))).lower()
+            if any(word in combined for word in message_words):
                 try:
-                    price = int(food_item.get("price", 0))
+                    price = int(float(food_item.get("price", 0)))
+                    if min_budget <= price <= max_budget:
+                        food_results.append({
+                            "name": str(food_item.get("name", "")),
+                            "description": str(food_item.get("description", "")),
+                            "price": price
+                        })
                 except:
-                    price = 0
+                    pass
 
-                if min_budget <= price <= max_budget:
-
-                    food_results.append({
-                        "name": food_item.get("name", "N/A"),
-                        "healthy_alternative": food_item.get("healthy_alternative", "N/A"),
-                        "description": food_item.get("description", "N/A"),
-                        "price": price
-                    })
-
-    # ================= PRODUCT SEARCH =================
-    else:
-
+    elif not products_df.empty:
         for _, product in products_df.iterrows():
-
-            product_name = str(product.get("name", "")).lower()
-            product_category = str(product.get("category", "")).lower()
-            product_desc = str(product.get("description", "")).lower()
-
-            combined_text = product_name + " " + product_category + " " + product_desc
-
-            if any(word in combined_text for word in message_words):
-
+            combined = (str(product.get("name", "")) + " " + str(product.get("category", ""))).lower()
+            if any(word in combined for word in message_words):
                 try:
-                    price = int(product.get("price", 0))
+                    price = int(float(product.get("price", 0)))
+                    if min_budget <= price <= max_budget:
+                        product_results.append({
+                            "name": str(product.get("name", "")),
+                            "price": price,
+                            "rating": str(product.get("rating", "N/A")),
+                            "review_snippet": str(product.get("review_snippet", "No reviews")),
+                            "description": str(product.get("description", "")),
+                            "category": str(product.get("category", "")),
+                            "link": str(product.get("link", "N/A"))
+                        })
                 except:
-                    price = 0
+                    pass
 
-                if min_budget <= price <= max_budget:
-
-                    product_results.append({
-                        "name": product.get("name", "N/A"),
-                        "price": price,
-                        "description": product.get("description", "N/A"),
-                        "category": product.get("category", "N/A")
+    # ================= REMEDY SEARCH =================
+    seen = set()
+    if not home_remedies_df.empty:
+        for _, r in home_remedies_df.iterrows():
+            combined = (str(r.get("issue", "")) + " " + str(r.get("remedy_name", "")) + " " + str(r.get("description", ""))).lower()
+            if any(word in combined for word in message_words):
+                key = str(r.get("remedy_name", ""))
+                if key not in seen:
+                    seen.add(key)
+                    remedy_results.append({
+                        "issue": str(r.get("issue", "")),
+                        "remedy_name": key,
+                        "description": str(r.get("description", ""))
                     })
 
-    # ================= HOME REMEDIES (FIXED PROPERLY) =================
-    seen_remedies = set()
-
-    for _, remedy in home_remedies_df.iterrows():
-
-        issue = str(remedy.get("issue", "")).lower()
-        remedy_name = str(remedy.get("remedy_name", "")).lower()  # FIXED COLUMN
-        description = str(remedy.get("description", "")).lower()
-
-        combined_text = issue + " " + remedy_name + " " + description
-
-        if any(word in combined_text for word in message_words):
-
-            key = remedy.get("remedy_name", "N/A")
-
-            if key in seen_remedies:
-                continue
-
-            seen_remedies.add(key)
-
-            remedy_results.append({
-                "issue": remedy.get("issue", "N/A"),
-                "remedy": remedy.get("remedy_name", "N/A"),
-                "description": remedy.get("description", "N/A")
-            })
-
-    # ================= FINAL RESPONSE =================
     if not product_results and not food_results and not remedy_results:
         return {
-            "reply": "❌ No results found. Try keywords like shampoo, face wash, coconut water, chips, etc.",
+            "reply": "❌ No results found. Please try different keywords.",
             "products": [],
             "food_suggestions": [],
             "home_remedies": []
