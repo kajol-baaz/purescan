@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 import easyocr
 import numpy as np
 import cv2
@@ -10,7 +10,7 @@ import re
 from difflib import get_close_matches
 import os
 
-app = FastAPI()
+app = FastAPI(docs_url="/docs", openapi_url="/openapi.json")
 
 # ================== PATHS & STATIC ==================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -27,6 +27,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ================== ROOT REDIRECT ==================
+@app.get("/")
+async def root():
+    return RedirectResponse(url="/static/purescan.html")
 
 # ================== LOAD DATABASES ==================
 reader = easyocr.Reader(['en'], gpu=False)
